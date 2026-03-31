@@ -17,7 +17,7 @@ export async function GET() {
 
     results.read_tickets = readErr
       ? { error: JSON.parse(JSON.stringify(readErr)) }
-      : { count: tickets?.length, sample: tickets?.map(t => ({ id: t.id, ticket_number: t.ticket_number, status: t.status, stripe_session_id: t.stripe_session_id })) };
+      : { count: tickets?.length, sample: tickets?.map(t => ({ id: t.id, ticket_number: t.ticket_number, status: t.status, stripe_session: t.stripe_session })) };
 
     // 2. Check table columns by reading one row
     if (tickets && tickets.length > 0) {
@@ -35,7 +35,7 @@ export async function GET() {
       price_per_ticket: 0,
       price_total: 0,
       status: "paid",
-      stripe_session_id: `test_${Date.now()}`,
+      stripe_session: `test_${Date.now()}`,
     });
 
     results.test_insert = insertErr

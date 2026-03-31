@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       price_total: price_per_ticket * quantity,
       status: "paid",
       referral_code: referral_code || null,
-      stripe_session_id: session.id,
+      stripe_session: session.id,
     });
 
     if (insertErr) {

@@ -34,7 +34,7 @@ export default async function CheckoutSuccessPage({
     const { data: existing } = await supabase
       .from("tickets")
       .select("id, ticket_number")
-      .eq("stripe_session_id", sessionId)
+      .eq("stripe_session", sessionId)
       .maybeSingle();
 
     if (existing) {
@@ -58,17 +58,17 @@ export default async function CheckoutSuccessPage({
         price_total: price_per_ticket * quantity,
         status: "paid",
         referral_code: meta.referral_code || null,
-        stripe_session_id: sessionId,
+        stripe_session: sessionId,
       });
 
       if (insertErr) {
         console.error("FALLBACK INSERT FAILED:", JSON.stringify(insertErr));
 
-        // If insert failed due to duplicate stripe_session_id, fetch the existing one
+        // If insert failed due to duplicate stripe_session, fetch the existing one
         const { data: retry } = await supabase
           .from("tickets")
           .select("id, ticket_number")
-          .eq("stripe_session_id", sessionId)
+          .eq("stripe_session", sessionId)
           .maybeSingle();
         if (retry) {
           confirmationNumber = retry.ticket_number;
