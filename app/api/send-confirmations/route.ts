@@ -1,9 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase-server";
 import { resend } from "@/lib/resend";
 import { buildTicketEmailHtml } from "@/lib/ticket-email";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
+  const auth = request.headers.get("authorization");
+  if (auth !== `Bearer ${process.env.RESEND_API_KEY}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const supabase = createServiceClient();
 
   const { data: tickets, error } = await supabase
@@ -18,12 +23,9 @@ export async function POST() {
       price_per_ticket,
       price_total,
       status,
-      email_sent,
-      screening_id,
-      screenings:screening_id (venue_name, address, city, state, date, time)
+      screening_id
     `
     )
-    .is("email_sent", null)
     .in("status", ["confirmed", "paid"]);
 
   if (error) {
@@ -31,24 +33,22 @@ export async function POST() {
   }
 
   if (!tickets || tickets.length === 0) {
-    return NextResponse.json({ message: "No unsent confirmations", sent: 0 });
+    return NextResponse.json({ message: "No tickets found", sent: 0 });
   }
 
   let sent = 0;
   const errors: string[] = [];
 
   for (const ticket of tickets) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const screening = (ticket as any).screenings as {
-      venue_name: string;
-      address: string;
-      city: string;
-      state: string;
-      date: string;
-      time: string;
-    } | null;
+    if (!ticket.email) continue;
 
-    if (!screening || !ticket.email) continue;
+    const { data: screening } = await supabase
+      .from("screenings")
+      .select("venue_name, address, city, state, date, time")
+      .eq("id", ticket.screening_id)
+      .single();
+
+    if (!screening) continue;
 
     try {
       await resend.emails.send({
@@ -69,12 +69,6 @@ export async function POST() {
           total: ticket.price_total,
         }),
       });
-
-      await supabase
-        .from("tickets")
-        .update({ email_sent: true })
-        .eq("id", ticket.id);
-
       sent++;
     } catch (err) {
       errors.push(`${ticket.ticket_number}: ${err}`);
