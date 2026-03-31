@@ -44,11 +44,11 @@ export const metadata: Metadata = {
     title: "Billy Knight — Official Theatrical Experience",
     description:
       "A film by Alec Griffen Roth. In select theaters August 21, 2026.",
-    url: "https://billyknightfilm.com",
+    url: "https://billyknightmovie.com",
     siteName: "Billy Knight",
     images: [
       {
-        url: "https://billyknightfilm.com/images/poster-BK.jpg",
+        url: "https://billyknightmovie.com/images/poster-BK.jpg",
         width: 900,
         height: 1200,
         alt: "Billy Knight — Official Theatrical Experience",
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     title: "Billy Knight — Official Theatrical Experience",
     description:
       "A film by Alec Griffen Roth. Starring Al Pacino, Charlie Heaton, Diana Silvers.",
-    images: ["https://billyknightfilm.com/images/poster-BK.jpg"],
+    images: ["https://billyknightmovie.com/images/poster-BK.jpg"],
   },
 };
 

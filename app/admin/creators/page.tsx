@@ -50,7 +50,7 @@ export default function CreatorsPage() {
   };
 
   const copyLink = (slug: string) => {
-    navigator.clipboard.writeText(`billyknightfilm.com/c/${slug}`);
+    navigator.clipboard.writeText(`billyknightmovie.com/c/${slug}`);
     setCopied(slug);
     setTimeout(() => setCopied(null), 2000);
   };
@@ -405,7 +405,7 @@ function AddCreatorModal({
               }}
             />
             <p className="font-montserrat text-[10px] text-white/25 mt-1">
-              billyknightfilm.com/c/{slug || "..."}
+              billyknightmovie.com/c/{slug || "..."}
             </p>
           </div>
           <div>

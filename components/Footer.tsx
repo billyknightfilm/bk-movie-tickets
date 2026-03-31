@@ -25,7 +25,7 @@ const socials = [
     ),
   },
   {
-    href: "https://youtube.com/@billyknightfilm",
+    href: "https://youtube.com/@billyknightmovie",
     label: "YouTube",
     icon: (
       <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
@@ -48,7 +48,7 @@ export default function Footer() {
   const [copied, setCopied] = useState(false);
 
   const handleShare = async () => {
-    const url = "https://billyknightfilm.com";
+    const url = "https://billyknightmovie.com";
     if (navigator.share) {
       try {
         await navigator.share({ title: "Billy Knight", url });

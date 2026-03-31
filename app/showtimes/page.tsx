@@ -162,7 +162,7 @@ function ShowtimesContent() {
                 ),
               },
               {
-                href: "https://youtube.com/@billyknightfilm",
+                href: "https://youtube.com/@billyknightmovie",
                 label: "YouTube",
                 icon: (
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">

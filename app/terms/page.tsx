@@ -128,10 +128,10 @@ export default function TermsOfUsePage() {
               If you have questions about these Terms of Use, please contact us
               at{" "}
               <a
-                href="mailto:contact@billyknightfilm.com"
+                href="mailto:contact@billyknightmovie.com"
                 className="text-white/70 hover:text-white transition-colors underline underline-offset-2 decoration-white/20 hover:decoration-white/40"
               >
-                contact@billyknightfilm.com
+                contact@billyknightmovie.com
               </a>
               .
             </p>
