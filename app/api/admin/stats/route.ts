@@ -17,7 +17,7 @@ export async function GET() {
   const screenings = screeningsRes.data || [];
   const creators = creatorsRes.data || [];
 
-  const paidTickets = tickets.filter((t) => t.status === "paid");
+  const paidTickets = tickets.filter((t) => t.status === "paid" || t.status === "confirmed");
   const totalTicketsSold = paidTickets.reduce(
     (sum, t) => sum + (t.quantity || 0),
     0

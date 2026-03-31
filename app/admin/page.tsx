@@ -199,6 +199,7 @@ function StatusBadge({ status }: { status: string }) {
   const colors: Record<string, { bg: string; text: string; border: string }> = {
     pending: { bg: "rgba(250,204,21,0.06)", text: "rgba(250,204,21,0.7)", border: "rgba(250,204,21,0.1)" },
     paid: { bg: "rgba(74,222,128,0.06)", text: "rgba(74,222,128,0.7)", border: "rgba(74,222,128,0.1)" },
+    confirmed: { bg: "rgba(74,222,128,0.06)", text: "rgba(74,222,128,0.7)", border: "rgba(74,222,128,0.1)" },
     cancelled: { bg: "rgba(248,113,113,0.06)", text: "rgba(248,113,113,0.7)", border: "rgba(248,113,113,0.1)" },
   };
   const c = colors[status] || { bg: "rgba(255,255,255,0.03)", text: "rgba(255,255,255,0.3)", border: "rgba(255,255,255,0.05)" };

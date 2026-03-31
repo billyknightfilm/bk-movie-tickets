@@ -187,7 +187,7 @@ export default function CreatorDetailPage() {
                 <td className="py-2.5 px-4">
                   <span
                     className={`inline-block px-2 py-0.5 rounded-lg font-montserrat text-[10px] font-medium uppercase tracking-wider ${
-                      t.status === "paid"
+                      t.status === "paid" || t.status === "confirmed"
                         ? "bg-green-500/20 text-green-400"
                         : t.status === "pending"
                           ? "bg-yellow-500/20 text-yellow-400"
