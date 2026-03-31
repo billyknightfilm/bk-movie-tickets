@@ -30,19 +30,17 @@ export default async function CheckoutSuccessPage({
   try {
     const supabase = createServiceClient();
 
-    const { data: existing, error: checkErr } = await supabase
+    // Check if webhook already created the ticket
+    const { data: existing } = await supabase
       .from("tickets")
       .select("id, ticket_number")
       .eq("stripe_session_id", sessionId)
       .maybeSingle();
 
-    if (checkErr) {
-      console.error("Fallback: ticket lookup failed:", JSON.stringify(checkErr));
-    }
-
     if (existing) {
       confirmationNumber = existing.ticket_number;
-    } else if (!checkErr) {
+    } else {
+      // No ticket found (or lookup failed) -- create one now
       const screening_id = meta.screening_id;
       const quantity = parseInt(meta.quantity);
       const price_per_ticket = parseFloat(process.env.NEXT_PUBLIC_TICKET_PRICE || "18.00");
@@ -64,8 +62,19 @@ export default async function CheckoutSuccessPage({
       });
 
       if (insertErr) {
-        console.error("Fallback: ticket insert failed:", JSON.stringify(insertErr));
+        console.error("FALLBACK INSERT FAILED:", JSON.stringify(insertErr));
+
+        // If insert failed due to duplicate stripe_session_id, fetch the existing one
+        const { data: retry } = await supabase
+          .from("tickets")
+          .select("id, ticket_number")
+          .eq("stripe_session_id", sessionId)
+          .maybeSingle();
+        if (retry) {
+          confirmationNumber = retry.ticket_number;
+        }
       } else {
+        console.log("FALLBACK INSERT OK:", ticket_number);
         confirmationNumber = ticket_number;
 
         const { error: rpcErr } = await supabase.rpc("increment_tickets_sold", {
@@ -73,7 +82,7 @@ export default async function CheckoutSuccessPage({
           p_qty: quantity,
         });
         if (rpcErr) {
-          console.error("Fallback: increment_tickets_sold failed:", JSON.stringify(rpcErr));
+          console.error("FALLBACK RPC FAILED:", JSON.stringify(rpcErr));
         }
 
         const { data: screening } = await supabase
@@ -108,13 +117,13 @@ export default async function CheckoutSuccessPage({
               .update({ email_sent: true })
               .eq("ticket_number", ticket_number);
           } catch (emailErr) {
-            console.error("Fallback: email send failed:", emailErr);
+            console.error("FALLBACK EMAIL FAILED:", emailErr);
           }
         }
       }
     }
   } catch (err) {
-    console.error("Fallback ticket creation crashed:", err);
+    console.error("FALLBACK CRASHED:", err);
   }
 
   return (

@@ -214,10 +214,10 @@ export default function ConfirmationView({
       >
         Questions?{" "}
         <a
-          href="mailto:contact@billyknightmovie.com"
+          href="mailto:team@billyknightfilm.com"
           style={{ color: "rgba(212,175,55,0.5)" }}
         >
-          contact@billyknightmovie.com
+          team@billyknightfilm.com
         </a>
       </motion.p>
     </div>
