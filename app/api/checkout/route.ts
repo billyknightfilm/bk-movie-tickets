@@ -77,6 +77,11 @@ export async function POST(request: NextRequest) {
         phone: phone?.trim() || "",
         quantity: String(quantity),
         referral_code: referral_code || "",
+        venue_name: screening.venue_name,
+        city: screening.city,
+        state: screening.state,
+        date: screening.date,
+        time: screening.time,
       },
     });
 
