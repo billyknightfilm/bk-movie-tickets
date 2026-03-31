@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
     if (screening) {
       try {
         await resend.emails.send({
-          from: "Billy Knight <onboarding@resend.dev>",
+          from: "Billy Knight <tickets@billyknightmovie.com>",
           to: email,
           subject: `Your Billy Knight Ticket — ${ticket_number}`,
           html: buildTicketEmailHtml({
