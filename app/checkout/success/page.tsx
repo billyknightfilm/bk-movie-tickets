@@ -1,5 +1,9 @@
 import { stripe } from "@/lib/stripe";
 import { redirect } from "next/navigation";
+import { createServiceClient } from "@/lib/supabase-server";
+import { resend } from "@/lib/resend";
+import { buildTicketEmailHtml } from "@/lib/ticket-email";
+import { randomInt } from "crypto";
 import ConfirmationView from "@/components/ConfirmationView";
 
 export default async function CheckoutSuccessPage({
@@ -21,6 +25,77 @@ export default async function CheckoutSuccessPage({
 
   const meta = session.metadata!;
   const confirmationNumber = "BK-" + sessionId.slice(-5).toUpperCase();
+
+  // Fallback: create ticket if webhook hasn't fired yet
+  const supabase = createServiceClient();
+  const { data: existing } = await supabase
+    .from("tickets")
+    .select("id")
+    .eq("stripe_session_id", sessionId)
+    .maybeSingle();
+
+  if (!existing) {
+    const screening_id = meta.screening_id;
+    const quantity = parseInt(meta.quantity);
+    const price_per_ticket = parseFloat(process.env.NEXT_PUBLIC_TICKET_PRICE || "18.00");
+    const ticket_number = `BK-${new Date().getFullYear()}-${randomInt(0, 100000).toString().padStart(5, "0")}`;
+
+    await supabase.rpc("increment_tickets_sold", {
+      p_screening_id: screening_id,
+      p_qty: quantity,
+    });
+
+    await supabase.from("tickets").insert({
+      ticket_number,
+      screening_id,
+      full_name: meta.full_name,
+      email: meta.email,
+      phone: meta.phone || null,
+      quantity,
+      price_per_ticket,
+      price_total: price_per_ticket * quantity,
+      status: "paid",
+      referral_code: meta.referral_code || null,
+      stripe_session_id: sessionId,
+    });
+
+    // Send confirmation email
+    const { data: screening } = await supabase
+      .from("screenings")
+      .select("venue_name, address, city, state, date, time")
+      .eq("id", screening_id)
+      .single();
+
+    if (screening) {
+      try {
+        await resend.emails.send({
+          from: "Billy Knight <tickets@billyknightmovie.com>",
+          to: meta.email,
+          subject: `Your Billy Knight Ticket — ${ticket_number}`,
+          html: buildTicketEmailHtml({
+            ticketNumber: ticket_number,
+            fullName: meta.full_name,
+            venueName: screening.venue_name,
+            address: screening.address,
+            city: screening.city,
+            state: screening.state,
+            date: screening.date,
+            time: screening.time,
+            quantity,
+            pricePerTicket: price_per_ticket,
+            total: price_per_ticket * quantity,
+          }),
+        });
+
+        await supabase
+          .from("tickets")
+          .update({ email_sent: true })
+          .eq("ticket_number", ticket_number);
+      } catch {
+        // Email failed but ticket is still valid
+      }
+    }
+  }
 
   return (
     <main
