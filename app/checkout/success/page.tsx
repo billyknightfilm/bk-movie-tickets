@@ -25,14 +25,14 @@ export default async function CheckoutSuccessPage({
   if (session.payment_status !== "paid") redirect("/showtimes");
 
   const meta = session.metadata!;
-  const confirmationNumber = "BK-" + sessionId.slice(-5).toUpperCase();
+  let confirmationNumber = "BK-" + sessionId.slice(-5).toUpperCase();
 
   try {
     const supabase = createServiceClient();
 
     const { data: existing, error: checkErr } = await supabase
       .from("tickets")
-      .select("id")
+      .select("id, ticket_number")
       .eq("stripe_session_id", sessionId)
       .maybeSingle();
 
@@ -40,14 +40,15 @@ export default async function CheckoutSuccessPage({
       console.error("Fallback: ticket lookup failed:", JSON.stringify(checkErr));
     }
 
-    if (!existing && !checkErr) {
+    if (existing) {
+      confirmationNumber = existing.ticket_number;
+    } else if (!checkErr) {
       const screening_id = meta.screening_id;
       const quantity = parseInt(meta.quantity);
       const price_per_ticket = parseFloat(process.env.NEXT_PUBLIC_TICKET_PRICE || "18.00");
       const rand = Math.floor(Math.random() * 100000).toString().padStart(5, "0");
       const ticket_number = `BK-${new Date().getFullYear()}-${rand}`;
 
-      // Insert ticket first (most important)
       const { error: insertErr } = await supabase.from("tickets").insert({
         ticket_number,
         screening_id,
@@ -65,7 +66,8 @@ export default async function CheckoutSuccessPage({
       if (insertErr) {
         console.error("Fallback: ticket insert failed:", JSON.stringify(insertErr));
       } else {
-        // Only increment count + send email if insert succeeded
+        confirmationNumber = ticket_number;
+
         const { error: rpcErr } = await supabase.rpc("increment_tickets_sold", {
           p_screening_id: screening_id,
           p_qty: quantity,

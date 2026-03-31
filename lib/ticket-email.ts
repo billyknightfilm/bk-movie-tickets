@@ -45,6 +45,8 @@ export function buildTicketEmailHtml(props: TicketEmailProps): string {
     total,
   } = props;
 
+  const firstName = fullName.split(" ")[0];
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -52,157 +54,136 @@ export function buildTicketEmailHtml(props: TicketEmailProps): string {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Your Billy Knight Ticket</title>
 </head>
-<body style="margin:0;padding:0;background-color:#080c12;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#080c12;">
+<body style="margin:0;padding:0;background-color:#0f0c08;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f0c08;">
     <tr>
-      <td align="center" style="padding:40px 16px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
+      <td align="center" style="padding:48px 16px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;">
 
           <!-- Header -->
           <tr>
-            <td align="center" style="padding-bottom:32px;">
-              <p style="margin:0;font-size:22px;font-weight:700;letter-spacing:0.12em;color:#ffffff;">
-                BILLY KNIGHT
+            <td style="padding-bottom:36px;">
+              <p style="margin:0;font-size:10px;font-weight:600;letter-spacing:0.26em;color:rgba(212,175,55,0.65);text-transform:uppercase;">
+                Booking Confirmed
               </p>
-              <p style="margin:6px 0 0;font-size:11px;letter-spacing:0.2em;color:rgba(255,255,255,0.3);text-transform:uppercase;">
-                Official Theatrical Experience
+              <p style="margin:8px 0 0;font-size:36px;font-weight:800;letter-spacing:0.04em;color:#F0E6CC;text-transform:uppercase;line-height:1;">
+                You&rsquo;re In, ${firstName}.
               </p>
             </td>
           </tr>
 
-          <!-- Ticket Card -->
+          <!-- Confirmation Number -->
           <tr>
-            <td style="background:linear-gradient(135deg,rgba(19,34,64,0.6),rgba(11,21,37,0.7));border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:32px 28px;">
-
-              <!-- Confirmation Badge -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td align="center" style="padding-bottom:24px;">
-                    <div style="width:48px;height:48px;border-radius:50%;background:rgba(240,201,58,0.1);border:1px solid rgba(240,201,58,0.2);display:inline-block;line-height:48px;text-align:center;">
-                      <span style="font-size:22px;">&#10003;</span>
-                    </div>
-                    <p style="margin:12px 0 0;font-size:18px;color:#f5f0e8;font-weight:300;font-style:italic;">
-                      Payment confirmed.
-                    </p>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Divider -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                <tr><td style="height:1px;background:rgba(255,255,255,0.06);"></td></tr>
-              </table>
-
-              <!-- Ticket Number -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td style="padding:20px 0;">
-                    <p style="margin:0;font-size:10px;letter-spacing:0.25em;color:rgba(255,255,255,0.3);text-transform:uppercase;">
-                      Ticket Number
-                    </p>
-                    <p style="margin:6px 0 0;font-size:24px;font-weight:700;letter-spacing:0.08em;color:#f0c93a;">
-                      ${ticketNumber}
-                    </p>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Divider -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                <tr><td style="height:1px;background:rgba(255,255,255,0.06);"></td></tr>
-              </table>
-
-              <!-- Screening Details -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td style="padding:20px 0 0;">
-                    <p style="margin:0;font-size:10px;letter-spacing:0.25em;color:rgba(255,255,255,0.3);text-transform:uppercase;">
-                      Venue
-                    </p>
-                    <p style="margin:6px 0 0;font-size:16px;color:#f5f0e8;font-weight:600;">
-                      ${venueName}
-                    </p>
-                    <p style="margin:4px 0 0;font-size:13px;color:rgba(255,255,255,0.35);">
-                      ${address}, ${city}, ${state}
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding:16px 0 0;">
-                    <p style="margin:0;font-size:10px;letter-spacing:0.25em;color:rgba(255,255,255,0.3);text-transform:uppercase;">
-                      Date &amp; Time
-                    </p>
-                    <p style="margin:6px 0 0;font-size:16px;color:#f5f0e8;font-weight:600;">
-                      ${formatDate(date)}
-                    </p>
-                    <p style="margin:4px 0 0;font-size:15px;color:rgba(255,255,255,0.5);">
-                      ${formatTime(time)}
-                    </p>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Divider -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding-top:20px;">
-                <tr><td style="height:1px;background:rgba(255,255,255,0.06);"></td></tr>
-              </table>
-
-              <!-- Order Details -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td style="padding:20px 0 0;">
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td>
-                          <p style="margin:0;font-size:10px;letter-spacing:0.25em;color:rgba(255,255,255,0.3);text-transform:uppercase;">Name</p>
-                          <p style="margin:4px 0 0;font-size:14px;color:#f5f0e8;">${fullName}</p>
-                        </td>
-                        <td align="right">
-                          <p style="margin:0;font-size:10px;letter-spacing:0.25em;color:rgba(255,255,255,0.3);text-transform:uppercase;">Tickets</p>
-                          <p style="margin:4px 0 0;font-size:14px;color:#f5f0e8;">${quantity} &times; $${pricePerTicket.toFixed(2)}</p>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Total -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:16px;">
-                <tr>
-                  <td style="background:rgba(240,201,58,0.06);border:1px solid rgba(240,201,58,0.1);border-radius:10px;padding:14px 16px;">
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td>
-                          <p style="margin:0;font-size:12px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;">Total Paid</p>
-                        </td>
-                        <td align="right">
-                          <p style="margin:0;font-size:24px;font-weight:700;color:#f0c93a;">$${total.toFixed(2)}</p>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-
+            <td style="padding:24px 0;border-top:1px solid rgba(212,175,55,0.18);border-bottom:1px solid rgba(212,175,55,0.18);">
+              <p style="margin:0;font-size:9px;font-weight:600;letter-spacing:0.26em;color:rgba(240,230,204,0.3);text-transform:uppercase;">
+                Confirmation Number
+              </p>
+              <p style="margin:8px 0 0;font-size:28px;font-weight:600;letter-spacing:0.12em;color:#D4AF37;line-height:1;">
+                ${ticketNumber}
+              </p>
+              <p style="margin:8px 0 0;font-size:11px;letter-spacing:0.04em;color:rgba(240,230,204,0.3);">
+                Save this number for your records.
+              </p>
             </td>
           </tr>
 
-          <!-- Footer Note -->
+          <!-- Order Details -->
           <tr>
-            <td align="center" style="padding:28px 20px 0;">
-              <p style="margin:0;font-size:12px;color:rgba(255,255,255,0.25);line-height:1.7;">
-                Present this email at the venue entrance.<br/>
-                Seat selection details will be sent closer to the screening date.
-              </p>
+            <td style="padding:24px 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <!-- Screening -->
+                <tr>
+                  <td style="padding:10px 0;border-bottom:1px solid rgba(255,252,245,0.06);">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                      <td><p style="margin:0;font-size:10px;font-weight:600;letter-spacing:0.16em;color:rgba(240,230,204,0.32);text-transform:uppercase;">Screening</p></td>
+                      <td align="right"><p style="margin:0;font-size:14px;color:rgba(240,230,204,0.75);">${venueName}</p></td>
+                    </tr></table>
+                  </td>
+                </tr>
+                <!-- Location -->
+                <tr>
+                  <td style="padding:10px 0;border-bottom:1px solid rgba(255,252,245,0.06);">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                      <td><p style="margin:0;font-size:10px;font-weight:600;letter-spacing:0.16em;color:rgba(240,230,204,0.32);text-transform:uppercase;">Location</p></td>
+                      <td align="right"><p style="margin:0;font-size:14px;color:rgba(240,230,204,0.75);">${city}, ${state}</p></td>
+                    </tr></table>
+                  </td>
+                </tr>
+                <!-- Address -->
+                <tr>
+                  <td style="padding:10px 0;border-bottom:1px solid rgba(255,252,245,0.06);">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                      <td><p style="margin:0;font-size:10px;font-weight:600;letter-spacing:0.16em;color:rgba(240,230,204,0.32);text-transform:uppercase;">Address</p></td>
+                      <td align="right"><p style="margin:0;font-size:14px;color:rgba(240,230,204,0.75);">${address}</p></td>
+                    </tr></table>
+                  </td>
+                </tr>
+                <!-- Date -->
+                <tr>
+                  <td style="padding:10px 0;border-bottom:1px solid rgba(255,252,245,0.06);">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                      <td><p style="margin:0;font-size:10px;font-weight:600;letter-spacing:0.16em;color:rgba(240,230,204,0.32);text-transform:uppercase;">Date</p></td>
+                      <td align="right"><p style="margin:0;font-size:14px;color:rgba(240,230,204,0.75);">${formatDate(date)}</p></td>
+                    </tr></table>
+                  </td>
+                </tr>
+                <!-- Time -->
+                <tr>
+                  <td style="padding:10px 0;border-bottom:1px solid rgba(255,252,245,0.06);">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                      <td><p style="margin:0;font-size:10px;font-weight:600;letter-spacing:0.16em;color:rgba(240,230,204,0.32);text-transform:uppercase;">Time</p></td>
+                      <td align="right"><p style="margin:0;font-size:14px;color:rgba(240,230,204,0.75);">${formatTime(time)}</p></td>
+                    </tr></table>
+                  </td>
+                </tr>
+                <!-- Tickets -->
+                <tr>
+                  <td style="padding:10px 0;border-bottom:1px solid rgba(255,252,245,0.06);">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                      <td><p style="margin:0;font-size:10px;font-weight:600;letter-spacing:0.16em;color:rgba(240,230,204,0.32);text-transform:uppercase;">Tickets</p></td>
+                      <td align="right"><p style="margin:0;font-size:14px;color:rgba(240,230,204,0.75);">${quantity} &times; $${pricePerTicket.toFixed(2)}</p></td>
+                    </tr></table>
+                  </td>
+                </tr>
+                <!-- Total -->
+                <tr>
+                  <td style="padding:10px 0;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                      <td><p style="margin:0;font-size:10px;font-weight:600;letter-spacing:0.16em;color:rgba(240,230,204,0.32);text-transform:uppercase;">Total Paid</p></td>
+                      <td align="right"><p style="margin:0;font-size:15px;font-weight:600;color:#F0E6CC;">$${total.toFixed(2)}</p></td>
+                    </tr></table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Seat Selection Notice -->
+          <tr>
+            <td style="padding:24px 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.2);border-radius:8px;padding:18px 20px;">
+                    <p style="margin:0 0 6px;font-size:10px;font-weight:700;letter-spacing:0.18em;color:rgba(212,175,55,0.8);text-transform:uppercase;">
+                      &#9679; Seat Selection
+                    </p>
+                    <p style="margin:0;font-size:13px;line-height:1.65;color:rgba(240,230,204,0.6);">
+                      You will receive an email closer to the release date with your seat selection details and everything you need for the evening. Keep your confirmation number handy.
+                    </p>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
 
           <!-- Footer -->
           <tr>
-            <td align="center" style="padding:28px 0 0;">
-              <p style="margin:0;font-size:10px;letter-spacing:0.1em;color:rgba(255,255,255,0.15);">
-                &copy; 2026 Billy Knight Film &mdash; billyknightmovie.com
+            <td align="center" style="padding:32px 0 0;">
+              <p style="margin:0;font-size:11px;letter-spacing:0.06em;color:rgba(240,230,204,0.25);line-height:1.7;">
+                Questions? <a href="mailto:contact@billyknightmovie.com" style="color:rgba(212,175,55,0.5);text-decoration:none;">contact@billyknightmovie.com</a>
+              </p>
+              <p style="margin:16px 0 0;font-size:10px;letter-spacing:0.1em;color:rgba(240,230,204,0.15);">
+                &copy; 2026 Billy Knight &mdash; billyknightmovie.com
               </p>
             </td>
           </tr>
