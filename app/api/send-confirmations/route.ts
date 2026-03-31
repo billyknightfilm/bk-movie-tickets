@@ -4,8 +4,8 @@ import { resend } from "@/lib/resend";
 import { buildTicketEmailHtml } from "@/lib/ticket-email";
 
 export async function POST(request: NextRequest) {
-  const auth = request.headers.get("authorization");
-  if (auth !== `Bearer ${process.env.RESEND_API_KEY}`) {
+  const auth = request.headers.get("x-api-key");
+  if (auth !== process.env.SUPABASE_SERVICE_ROLE_KEY) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
