@@ -3,8 +3,9 @@ import { redirect } from "next/navigation";
 import { createServiceClient } from "@/lib/supabase-server";
 import { resend } from "@/lib/resend";
 import { buildTicketEmailHtml } from "@/lib/ticket-email";
-import { randomInt } from "crypto";
 import ConfirmationView from "@/components/ConfirmationView";
+
+export const dynamic = "force-dynamic";
 
 export default async function CheckoutSuccessPage({
   searchParams,
@@ -26,75 +27,92 @@ export default async function CheckoutSuccessPage({
   const meta = session.metadata!;
   const confirmationNumber = "BK-" + sessionId.slice(-5).toUpperCase();
 
-  // Fallback: create ticket if webhook hasn't fired yet
-  const supabase = createServiceClient();
-  const { data: existing } = await supabase
-    .from("tickets")
-    .select("id")
-    .eq("stripe_session_id", sessionId)
-    .maybeSingle();
+  try {
+    const supabase = createServiceClient();
 
-  if (!existing) {
-    const screening_id = meta.screening_id;
-    const quantity = parseInt(meta.quantity);
-    const price_per_ticket = parseFloat(process.env.NEXT_PUBLIC_TICKET_PRICE || "18.00");
-    const ticket_number = `BK-${new Date().getFullYear()}-${randomInt(0, 100000).toString().padStart(5, "0")}`;
+    const { data: existing, error: checkErr } = await supabase
+      .from("tickets")
+      .select("id")
+      .eq("stripe_session_id", sessionId)
+      .maybeSingle();
 
-    await supabase.rpc("increment_tickets_sold", {
-      p_screening_id: screening_id,
-      p_qty: quantity,
-    });
+    if (checkErr) {
+      console.error("Fallback: ticket lookup failed:", JSON.stringify(checkErr));
+    }
 
-    await supabase.from("tickets").insert({
-      ticket_number,
-      screening_id,
-      full_name: meta.full_name,
-      email: meta.email,
-      phone: meta.phone || null,
-      quantity,
-      price_per_ticket,
-      price_total: price_per_ticket * quantity,
-      status: "paid",
-      referral_code: meta.referral_code || null,
-      stripe_session_id: sessionId,
-    });
+    if (!existing && !checkErr) {
+      const screening_id = meta.screening_id;
+      const quantity = parseInt(meta.quantity);
+      const price_per_ticket = parseFloat(process.env.NEXT_PUBLIC_TICKET_PRICE || "18.00");
+      const rand = Math.floor(Math.random() * 100000).toString().padStart(5, "0");
+      const ticket_number = `BK-${new Date().getFullYear()}-${rand}`;
 
-    // Send confirmation email
-    const { data: screening } = await supabase
-      .from("screenings")
-      .select("venue_name, address, city, state, date, time")
-      .eq("id", screening_id)
-      .single();
+      // Insert ticket first (most important)
+      const { error: insertErr } = await supabase.from("tickets").insert({
+        ticket_number,
+        screening_id,
+        full_name: meta.full_name,
+        email: meta.email,
+        phone: meta.phone || null,
+        quantity,
+        price_per_ticket,
+        price_total: price_per_ticket * quantity,
+        status: "paid",
+        referral_code: meta.referral_code || null,
+        stripe_session_id: sessionId,
+      });
 
-    if (screening) {
-      try {
-        await resend.emails.send({
-          from: "Billy Knight <tickets@billyknightmovie.com>",
-          to: meta.email,
-          subject: `Your Billy Knight Ticket — ${ticket_number}`,
-          html: buildTicketEmailHtml({
-            ticketNumber: ticket_number,
-            fullName: meta.full_name,
-            venueName: screening.venue_name,
-            address: screening.address,
-            city: screening.city,
-            state: screening.state,
-            date: screening.date,
-            time: screening.time,
-            quantity,
-            pricePerTicket: price_per_ticket,
-            total: price_per_ticket * quantity,
-          }),
+      if (insertErr) {
+        console.error("Fallback: ticket insert failed:", JSON.stringify(insertErr));
+      } else {
+        // Only increment count + send email if insert succeeded
+        const { error: rpcErr } = await supabase.rpc("increment_tickets_sold", {
+          p_screening_id: screening_id,
+          p_qty: quantity,
         });
+        if (rpcErr) {
+          console.error("Fallback: increment_tickets_sold failed:", JSON.stringify(rpcErr));
+        }
 
-        await supabase
-          .from("tickets")
-          .update({ email_sent: true })
-          .eq("ticket_number", ticket_number);
-      } catch {
-        // Email failed but ticket is still valid
+        const { data: screening } = await supabase
+          .from("screenings")
+          .select("venue_name, address, city, state, date, time")
+          .eq("id", screening_id)
+          .single();
+
+        if (screening) {
+          try {
+            await resend.emails.send({
+              from: "Billy Knight <tickets@billyknightmovie.com>",
+              to: meta.email,
+              subject: `Your Billy Knight Ticket — ${ticket_number}`,
+              html: buildTicketEmailHtml({
+                ticketNumber: ticket_number,
+                fullName: meta.full_name,
+                venueName: screening.venue_name,
+                address: screening.address,
+                city: screening.city,
+                state: screening.state,
+                date: screening.date,
+                time: screening.time,
+                quantity,
+                pricePerTicket: price_per_ticket,
+                total: price_per_ticket * quantity,
+              }),
+            });
+
+            await supabase
+              .from("tickets")
+              .update({ email_sent: true })
+              .eq("ticket_number", ticket_number);
+          } catch (emailErr) {
+            console.error("Fallback: email send failed:", emailErr);
+          }
+        }
       }
     }
+  } catch (err) {
+    console.error("Fallback ticket creation crashed:", err);
   }
 
   return (
