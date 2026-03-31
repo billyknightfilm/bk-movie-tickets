@@ -145,6 +145,7 @@ export default function TicketsPage() {
                     "Ticket #",
                     "Name",
                     "Email",
+                    "Phone",
                     "Venue",
                     "Date",
                     "Qty",
@@ -177,6 +178,9 @@ export default function TicketsPage() {
                     </td>
                     <td className="font-montserrat text-[11px] text-bk-dim py-2.5 px-3">
                       {t.email}
+                    </td>
+                    <td className="font-montserrat text-[11px] text-bk-dim py-2.5 px-3 whitespace-nowrap">
+                      {t.phone || "—"}
                     </td>
                     <td className="font-montserrat text-[11px] text-bk-dim py-2.5 px-3 whitespace-nowrap">
                       {t.screening?.venue_name || "—"}
