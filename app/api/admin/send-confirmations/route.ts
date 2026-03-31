@@ -38,7 +38,8 @@ export async function POST() {
   const errors: string[] = [];
 
   for (const ticket of tickets) {
-    const screening = ticket.screenings as {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const screening = (ticket as any).screenings as {
       venue_name: string;
       address: string;
       city: string;
