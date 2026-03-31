@@ -180,7 +180,7 @@ export function buildTicketEmailHtml(props: TicketEmailProps): string {
           <tr>
             <td align="center" style="padding:32px 0 0;">
               <p style="margin:0;font-size:11px;letter-spacing:0.06em;color:rgba(240,230,204,0.25);line-height:1.7;">
-                Questions? <a href="mailto:contact@billyknightmovie.com" style="color:rgba(212,175,55,0.5);text-decoration:none;">contact@billyknightmovie.com</a>
+                Questions? <a href="mailto:team@billyknightfilm.com" style="color:rgba(212,175,55,0.5);text-decoration:none;">team@billyknightfilm.com</a>
               </p>
               <p style="margin:16px 0 0;font-size:10px;letter-spacing:0.1em;color:rgba(240,230,204,0.15);">
                 &copy; 2026 Billy Knight &mdash; billyknightmovie.com
