@@ -102,6 +102,12 @@ export async function POST(request: NextRequest) {
             total: price_per_ticket * quantity,
           }),
         });
+
+        await supabase
+          .from("tickets")
+          .update({ email_sent: true })
+          .eq("ticket_number", ticket_number);
+
         console.log(`Confirmation email sent to ${email} for ticket ${ticket_number}`);
       } catch (emailErr) {
         console.error("Confirmation email failed (ticket still valid):", emailErr);
