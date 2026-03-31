@@ -28,10 +28,11 @@ export default function DatePicker({
 
   return (
     <div
-      className="relative inline-flex gap-1 overflow-x-auto py-1 px-1 scrollbar-hide rounded-2xl"
+      className="relative flex gap-1 overflow-x-auto py-1 px-1 scrollbar-hide rounded-2xl"
       style={{
         background: "rgba(255,255,255,0.025)",
         border: "1px solid rgba(255,255,255,0.04)",
+        WebkitOverflowScrolling: "touch",
       }}
     >
       {/* Single sliding pill */}

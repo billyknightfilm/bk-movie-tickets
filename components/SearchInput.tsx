@@ -81,7 +81,7 @@ export default function SearchInput({ onSearch, isLoading, initialValue }: Searc
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           placeholder="City or zip code"
-          className="flex-1 bg-transparent border-0 font-montserrat text-[14px] text-white/90 placeholder:text-white/20 focus:outline-none py-1.5"
+          className="flex-1 min-w-0 bg-transparent border-0 font-montserrat text-[14px] text-white/90 placeholder:text-white/20 focus:outline-none py-1.5"
         />
 
         {isLoading ? (
@@ -90,9 +90,9 @@ export default function SearchInput({ onSearch, isLoading, initialValue }: Searc
           value.trim() && (
             <motion.button
               onClick={handleSubmit}
-              className="flex-shrink-0 font-montserrat text-[13px] font-medium tracking-[0.01em] text-white/80"
+              className="flex-shrink-0 font-montserrat text-[12px] sm:text-[13px] font-medium tracking-[0.01em] text-white/80"
               style={{
-                padding: "8px 18px",
+                padding: "8px 14px",
                 borderRadius: 10,
                 background:
                   "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%)",

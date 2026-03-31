@@ -104,9 +104,9 @@ export default function Home() {
             </motion.h1>
 
             <motion.p
-              className="font-montserrat font-medium text-white/80 text-center mt-7 tracking-[0.2em] uppercase will-change-transform"
+              className="font-montserrat font-medium text-white/80 text-center mt-7 tracking-[0.15em] sm:tracking-[0.2em] uppercase will-change-transform px-6"
               style={{
-                fontSize: "clamp(13px, 1.5vw, 17px)",
+                fontSize: "clamp(12px, 1.5vw, 17px)",
                 opacity: subtitleOpacity,
                 y: subtitleY,
               }}
@@ -252,7 +252,7 @@ export default function Home() {
       </motion.section>
 
       {/* Footer */}
-      <div className="max-w-[900px] mx-auto px-6 pb-6">
+      <div className="max-w-[900px] mx-auto px-4 sm:px-6 pb-6">
         <Footer />
       </div>
 

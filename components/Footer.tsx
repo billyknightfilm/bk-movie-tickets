@@ -64,7 +64,7 @@ export default function Footer() {
 
   return (
     <footer
-      className="rounded-2xl px-6 py-5 mt-auto"
+      className="rounded-2xl px-4 sm:px-6 py-5 mt-auto"
       style={{
         background: "rgba(255,255,255,0.025)",
         border: "1px solid rgba(255,255,255,0.05)",
@@ -73,15 +73,9 @@ export default function Footer() {
         WebkitBackdropFilter: "blur(16px)",
       }}
     >
-      {/* Top row: copyright + socials + share */}
-      <div className="flex items-center justify-between">
-        <p className="font-montserrat font-medium text-[11px] text-white/25 tracking-[0.04em]">
-          &copy; 2026 Billy Knight Film
-        </p>
-
-        <div className="flex items-center gap-4">
-          {/* Social icons */}
-          <div className="flex items-center gap-1.5">
+      <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+        <div className="flex items-center gap-3 sm:gap-4 order-first sm:order-last">
+          <div className="flex items-center gap-1">
             {socials.map((s) => (
               <a
                 key={s.label}
@@ -96,10 +90,8 @@ export default function Footer() {
             ))}
           </div>
 
-          {/* Divider */}
           <div className="w-px h-4 bg-white/[0.06]" />
 
-          {/* Share */}
           <button
             onClick={handleShare}
             className="flex items-center gap-1.5 font-montserrat font-medium text-[11px] text-white/20 hover:text-white/50 transition-all duration-300"
@@ -127,10 +119,13 @@ export default function Footer() {
             )}
           </button>
         </div>
+
+        <p className="font-montserrat font-medium text-[11px] text-white/25 tracking-[0.04em]">
+          &copy; 2026 Billy Knight Film
+        </p>
       </div>
 
-      {/* Bottom row: legal links */}
-      <div className="flex items-center gap-4 mt-3 pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+      <div className="flex items-center justify-center sm:justify-start gap-4 mt-3 pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
         <Link
           href="/privacy"
           className="font-montserrat font-medium text-[10px] text-white/15 hover:text-white/40 tracking-[0.04em] transition-colors duration-300"
