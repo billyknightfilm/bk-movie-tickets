@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
+import { resend } from "@/lib/resend";
 import { createServiceClient } from "@/lib/supabase-server";
+import { buildTicketEmailHtml } from "@/lib/ticket-email";
 import { randomInt } from "crypto";
 import Stripe from "stripe";
 
@@ -71,6 +73,39 @@ export async function POST(request: NextRequest) {
     if (insertErr) {
       console.error("Ticket insert failed:", insertErr);
       return NextResponse.json({ error: insertErr.message }, { status: 500 });
+    }
+
+    // Fetch screening details for the confirmation email
+    const { data: screening } = await supabase
+      .from("screenings")
+      .select("venue_name, address, city, state, date, time")
+      .eq("id", screening_id)
+      .single();
+
+    if (screening) {
+      try {
+        await resend.emails.send({
+          from: "Billy Knight <onboarding@resend.dev>",
+          to: email,
+          subject: `Your Billy Knight Ticket — ${ticket_number}`,
+          html: buildTicketEmailHtml({
+            ticketNumber: ticket_number,
+            fullName: full_name,
+            venueName: screening.venue_name,
+            address: screening.address,
+            city: screening.city,
+            state: screening.state,
+            date: screening.date,
+            time: screening.time,
+            quantity,
+            pricePerTicket: price_per_ticket,
+            total: price_per_ticket * quantity,
+          }),
+        });
+        console.log(`Confirmation email sent to ${email} for ticket ${ticket_number}`);
+      } catch (emailErr) {
+        console.error("Confirmation email failed (ticket still valid):", emailErr);
+      }
     }
 
     console.log(`Ticket ${ticket_number} confirmed for ${email}`);
