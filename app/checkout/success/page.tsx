@@ -44,27 +44,38 @@ export default async function CheckoutSuccessPage({
       const screening_id = meta.screening_id;
       const quantity = parseInt(meta.quantity);
       const price_per_ticket = parseFloat(process.env.NEXT_PUBLIC_TICKET_PRICE || "18.00");
-      const rand = Math.floor(Math.random() * 100000).toString().padStart(5, "0");
-      const ticket_number = `BK-${new Date().getFullYear()}-${rand}`;
 
-      const { error: insertErr } = await supabase.from("tickets").insert({
-        ticket_number,
-        screening_id,
-        full_name: meta.full_name,
-        email: meta.email,
-        phone: meta.phone || null,
-        quantity,
-        price_per_ticket,
-        price_total: price_per_ticket * quantity,
-        status: "paid",
-        referral_code: meta.referral_code || null,
-        stripe_session: sessionId,
-      });
+      const generateTicketNumber = () => {
+        const ts = Date.now().toString(36).toUpperCase();
+        const r = Math.floor(Math.random() * 36).toString(36).toUpperCase();
+        return `BK-${new Date().getFullYear()}-${ts}${r}`;
+      };
 
-      if (insertErr) {
-        console.error("FALLBACK INSERT FAILED:", JSON.stringify(insertErr));
+      let ticket_number = generateTicketNumber();
+      let inserted = false;
 
-        // If insert failed due to duplicate stripe_session, fetch the existing one
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const { error } = await supabase.from("tickets").insert({
+          ticket_number,
+          screening_id,
+          full_name: meta.full_name,
+          email: meta.email,
+          phone: meta.phone || null,
+          quantity,
+          price_per_ticket,
+          price_total: price_per_ticket * quantity,
+          status: "paid",
+          referral_code: meta.referral_code || null,
+          stripe_session: sessionId,
+        });
+
+        if (!error) {
+          inserted = true;
+          break;
+        }
+
+        console.error(`FALLBACK INSERT attempt ${attempt + 1} failed:`, JSON.stringify(error));
+
         const { data: retry } = await supabase
           .from("tickets")
           .select("id, ticket_number")
@@ -72,10 +83,18 @@ export default async function CheckoutSuccessPage({
           .maybeSingle();
         if (retry) {
           confirmationNumber = retry.ticket_number;
+          inserted = true;
+          break;
         }
-      } else {
-        console.log("FALLBACK INSERT OK:", ticket_number);
+
+        ticket_number = generateTicketNumber();
+      }
+
+      if (inserted && confirmationNumber !== ticket_number) {
         confirmationNumber = ticket_number;
+      }
+
+      if (inserted) {
 
         const { error: rpcErr } = await supabase.rpc("increment_tickets_sold", {
           p_screening_id: screening_id,

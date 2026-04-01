@@ -52,30 +52,44 @@ export async function POST(request: NextRequest) {
     }
 
     const price_per_ticket = parseFloat(process.env.NEXT_PUBLIC_TICKET_PRICE || "18.00");
-    const year = new Date().getFullYear();
-    const rand = randomInt(0, 100000).toString().padStart(5, "0");
-    const ticket_number = `BK-${year}-${rand}`;
 
-    const { error: insertErr } = await supabase.from("tickets").insert({
-      ticket_number,
-      screening_id,
-      full_name,
-      email,
-      phone: phone || null,
-      quantity,
-      price_per_ticket,
-      price_total: price_per_ticket * quantity,
-      status: "paid",
-      referral_code: referral_code || null,
-      stripe_session: session.id,
-    });
+    const generateTicketNumber = () => {
+      const ts = Date.now().toString(36).toUpperCase();
+      const r = randomInt(0, 36).toString(36).toUpperCase();
+      return `BK-${new Date().getFullYear()}-${ts}${r}`;
+    };
 
-    if (insertErr) {
-      console.error("Ticket insert failed:", insertErr);
-      return NextResponse.json({ error: insertErr.message }, { status: 500 });
+    let ticket_number = generateTicketNumber();
+    let inserted = false;
+
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const { error } = await supabase.from("tickets").insert({
+        ticket_number,
+        screening_id,
+        full_name,
+        email,
+        phone: phone || null,
+        quantity,
+        price_per_ticket,
+        price_total: price_per_ticket * quantity,
+        status: "paid",
+        referral_code: referral_code || null,
+        stripe_session: session.id,
+      });
+
+      if (!error) {
+        inserted = true;
+        break;
+      }
+
+      console.error(`Ticket insert attempt ${attempt + 1} failed:`, error.message);
+      ticket_number = generateTicketNumber();
     }
 
-    // Fetch screening details for the confirmation email
+    if (!inserted) {
+      return NextResponse.json({ error: "Ticket insert failed after retries" }, { status: 500 });
+    }
+
     const { data: screening } = await supabase
       .from("screenings")
       .select("venue_name, address, city, state, date, time")
@@ -107,8 +121,6 @@ export async function POST(request: NextRequest) {
           .from("tickets")
           .update({ email_sent: true })
           .eq("ticket_number", ticket_number);
-
-        console.log(`Confirmation email sent to ${email} for ticket ${ticket_number}`);
       } catch (emailErr) {
         console.error("Confirmation email failed (ticket still valid):", emailErr);
       }

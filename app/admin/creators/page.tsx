@@ -24,6 +24,7 @@ export default function CreatorsPage() {
   const [editingCreator, setEditingCreator] = useState<Creator | null>(null);
   const [deletingCreator, setDeletingCreator] = useState<Creator | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
 
   const fetchCreators = async () => {
     const res = await fetch("/api/admin/creators");
@@ -72,7 +73,7 @@ export default function CreatorsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4">
         <h1 className="font-montserrat font-medium text-white text-[13px] tracking-[0.2em] uppercase">
           Creators & Referrals
         </h1>
@@ -87,6 +88,21 @@ export default function CreatorsPage() {
         >
           + ADD CREATOR
         </button>
+      </div>
+
+      <div className="mb-4">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search creators by name or slug..."
+          className="w-full max-w-sm px-3 py-2 font-montserrat text-[12px] rounded-xl outline-none"
+          style={{
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid rgba(255,255,255,0.06)",
+            color: "var(--bk-white)",
+          }}
+        />
       </div>
 
       <div
@@ -122,7 +138,13 @@ export default function CreatorsPage() {
             </tr>
           </thead>
           <tbody>
-            {creators.map((c, i) => {
+            {creators
+            .filter((c) => {
+              if (!search.trim()) return true;
+              const q = search.toLowerCase();
+              return c.name.toLowerCase().includes(q) || c.slug.toLowerCase().includes(q) || (c.email && c.email.toLowerCase().includes(q));
+            })
+            .map((c, i) => {
               const rank = i + 1;
               return (
                 <tr
