@@ -287,10 +287,10 @@ function ShowtimesContent() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.1 }}
                   >
-                    <p className="font-bebas text-[12px] tracking-[0.25em] whitespace-nowrap" style={{ color: "#D4AF37" }}>
+                    <p className="font-bebas text-[12px] tracking-[0.25em] whitespace-nowrap" style={{ color: "rgba(201,168,76,0.7)" }}>
                       OPENING NIGHT PREMIERES
                     </p>
-                    <div className="h-px flex-1" style={{ background: "linear-gradient(to right, rgba(212,175,55,0.25), transparent)" }} />
+                    <div className="h-px flex-1" style={{ background: "linear-gradient(to right, rgba(195,170,90,0.12), transparent)" }} />
                   </motion.div>
                   <motion.div layout className="space-y-3 mb-6">
                     <AnimatePresence mode="popLayout">
@@ -494,10 +494,10 @@ function ShowtimesContent() {
           {premiereResults.length > 0 && (
             <>
               <div className="flex items-center gap-3 mb-4">
-                <p className="font-bebas text-[11px] tracking-[0.25em] whitespace-nowrap" style={{ color: "#D4AF37" }}>
+                <p className="font-bebas text-[11px] tracking-[0.25em] whitespace-nowrap" style={{ color: "rgba(201,168,76,0.7)" }}>
                   OPENING NIGHT PREMIERES
                 </p>
-                <div className="h-px flex-1" style={{ background: "linear-gradient(to right, rgba(212,175,55,0.25), transparent)" }} />
+                <div className="h-px flex-1" style={{ background: "linear-gradient(to right, rgba(195,170,90,0.12), transparent)" }} />
               </div>
               <motion.div layout className="space-y-3 mb-6">
                 <AnimatePresence mode="popLayout">
