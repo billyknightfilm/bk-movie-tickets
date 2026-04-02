@@ -13,6 +13,8 @@ import MobileCheckout from "@/components/MobileCheckout";
 import Footer from "@/components/Footer";
 import type { Showtime, VenueGroup } from "@/components/ShowtimeCard";
 
+const PREMIERE_DATE = "2026-08-21";
+
 function ShowtimesContent() {
   const searchParams = useSearchParams();
   const [results, setResults] = useState<VenueGroup[]>([]);
@@ -55,6 +57,18 @@ function ShowtimesContent() {
       }))
       .filter((v) => v.filteredShowtimes.length > 0);
   }, [results, selectedDate]);
+
+  const isPremiereDate = selectedDate === PREMIERE_DATE;
+
+  const premiereResults = useMemo(
+    () => (isPremiereDate ? filteredResults : []),
+    [filteredResults, isPremiereDate]
+  );
+
+  const regularResults = useMemo(
+    () => (isPremiereDate ? [] : filteredResults),
+    [filteredResults, isPremiereDate]
+  );
 
   const handleSearch = useCallback(async (query: string) => {
     setIsLoading(true);
@@ -264,8 +278,47 @@ function ShowtimesContent() {
                 </motion.div>
               )}
 
-              {/* Section label */}
-              {filteredResults.length > 0 && (
+              {/* Premiere section */}
+              {premiereResults.length > 0 && (
+                <>
+                  <motion.div
+                    className="flex items-center gap-4 mb-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.1 }}
+                  >
+                    <p className="font-bebas text-[12px] tracking-[0.25em] whitespace-nowrap" style={{ color: "#D4AF37" }}>
+                      OPENING NIGHT PREMIERES
+                    </p>
+                    <div className="h-px flex-1" style={{ background: "linear-gradient(to right, rgba(212,175,55,0.25), transparent)" }} />
+                  </motion.div>
+                  <motion.div layout className="space-y-3 mb-6">
+                    <AnimatePresence mode="popLayout">
+                      {premiereResults.map((venue, i) => (
+                        <motion.div
+                          key={`premiere-${venue.venue_name}-${venue.address}`}
+                          initial={{ opacity: 0, y: 16 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                          transition={{ delay: i * 0.06, duration: 0.35, ease: "easeOut" }}
+                          layout
+                        >
+                          <ShowtimeCard
+                            venue={venue}
+                            showtimes={venue.filteredShowtimes}
+                            selectedId={selectedShowtime?.id ?? null}
+                            onSelect={handleSelect}
+                            isPremiere
+                          />
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </motion.div>
+                </>
+              )}
+
+              {/* Regular section label */}
+              {regularResults.length > 0 && (
                 <motion.div
                   className="flex items-center gap-4 mb-4"
                   initial={{ opacity: 0 }}
@@ -282,7 +335,7 @@ function ShowtimesContent() {
               {/* Results */}
               <motion.div layout className="flex-1 space-y-3 pb-4">
                 <AnimatePresence mode="popLayout">
-                  {filteredResults.map((venue, i) => (
+                  {regularResults.map((venue, i) => (
                     <motion.div
                       key={`${venue.venue_name}-${venue.address}`}
                       initial={{ opacity: 0, y: 16 }}
@@ -437,8 +490,42 @@ function ShowtimesContent() {
             </motion.div>
           )}
 
-          {/* Section label */}
-          {filteredResults.length > 0 && (
+          {/* Premiere section (mobile) */}
+          {premiereResults.length > 0 && (
+            <>
+              <div className="flex items-center gap-3 mb-4">
+                <p className="font-bebas text-[11px] tracking-[0.25em] whitespace-nowrap" style={{ color: "#D4AF37" }}>
+                  OPENING NIGHT PREMIERES
+                </p>
+                <div className="h-px flex-1" style={{ background: "linear-gradient(to right, rgba(212,175,55,0.25), transparent)" }} />
+              </div>
+              <motion.div layout className="space-y-3 mb-6">
+                <AnimatePresence mode="popLayout">
+                  {premiereResults.map((venue, i) => (
+                    <motion.div
+                      key={`premiere-m-${venue.venue_name}-${venue.address}`}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                      transition={{ delay: i * 0.06, duration: 0.35, ease: "easeOut" }}
+                      layout
+                    >
+                      <ShowtimeCard
+                        venue={venue}
+                        showtimes={venue.filteredShowtimes}
+                        selectedId={selectedShowtime?.id ?? null}
+                        onSelect={handleSelect}
+                        isPremiere
+                      />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </motion.div>
+            </>
+          )}
+
+          {/* Regular section label (mobile) */}
+          {regularResults.length > 0 && (
             <div className="flex items-center gap-3 mb-4">
               <p className="font-bebas text-bk-gold/60 text-[11px] tracking-[0.25em] whitespace-nowrap">
                 SELECT A SHOWTIME
@@ -447,10 +534,10 @@ function ShowtimesContent() {
             </div>
           )}
 
-          {/* Results */}
+          {/* Results (mobile) */}
           <motion.div layout className="flex-1 space-y-3 pb-4">
             <AnimatePresence mode="popLayout">
-              {filteredResults.map((venue, i) => (
+              {regularResults.map((venue, i) => (
                 <motion.div
                   key={`${venue.venue_name}-${venue.address}`}
                   initial={{ opacity: 0, y: 16 }}

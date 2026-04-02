@@ -1,14 +1,27 @@
 import { createServiceClient } from "@/lib/supabase-server";
 import { resend } from "@/lib/resend";
+import { escapeHtml } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
-  const { audience, screening_id, referral_code, email: specificEmail, subject, body } = await request.json();
+  let parsed;
+  try {
+    parsed = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  const { audience, screening_id, referral_code, email: specificEmail, subject, body } = parsed;
 
   if (!subject?.trim() || !body?.trim()) {
     return NextResponse.json({ error: "Subject and message are required" }, { status: 400 });
+  }
+
+  const validAudiences = ["all", "screening", "creator", "specific"];
+  if (!audience || !validAudiences.includes(audience)) {
+    return NextResponse.json({ error: "Invalid audience type" }, { status: 400 });
   }
 
   const db = createServiceClient();
@@ -17,6 +30,11 @@ export async function POST(request: NextRequest) {
 
   if (audience === "specific" && specificEmail) {
     emails = [specificEmail];
+  } else if (audience === "all") {
+    const { data: tickets, error } = await db.from("tickets").select("email");
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    const unique = new Set((tickets || []).map((t) => t.email).filter(Boolean));
+    emails = Array.from(unique);
   } else {
     let query = db.from("tickets").select("email");
 
@@ -24,6 +42,8 @@ export async function POST(request: NextRequest) {
       query = query.eq("screening_id", screening_id);
     } else if (audience === "creator" && referral_code) {
       query = query.eq("referral_code", referral_code);
+    } else {
+      return NextResponse.json({ error: "Missing filter value for audience" }, { status: 400 });
     }
 
     const { data: tickets, error } = await query;
@@ -41,7 +61,7 @@ export async function POST(request: NextRequest) {
 
   const htmlBody = body
     .split("\n")
-    .map((line: string) => (line.trim() === "" ? "<br/>" : `<p style="margin:0 0 8px;font-size:15px;color:#F0E6CC;line-height:1.65;">${line}</p>`))
+    .map((line: string) => (line.trim() === "" ? "<br/>" : `<p style="margin:0 0 8px;font-size:15px;color:#F0E6CC;line-height:1.65;">${escapeHtml(line)}</p>`))
     .join("");
 
   const emailHtml = `<!DOCTYPE html>

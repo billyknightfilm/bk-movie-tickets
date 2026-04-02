@@ -19,9 +19,12 @@ export async function GET(request: NextRequest) {
   let query = db.from("tickets").select("*", { count: "exact" });
 
   if (search) {
-    query = query.or(
-      `full_name.ilike.%${search}%,email.ilike.%${search}%,ticket_number.ilike.%${search}%`
-    );
+    const sanitized = search.replace(/[%_(),."'\\]/g, "");
+    if (sanitized) {
+      query = query.or(
+        `full_name.ilike.%${sanitized}%,email.ilike.%${sanitized}%,ticket_number.ilike.%${sanitized}%`
+      );
+    }
   }
   if (screeningId) {
     query = query.eq("screening_id", screeningId);

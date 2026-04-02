@@ -23,7 +23,11 @@ export async function POST(request: NextRequest) {
   const errors: Record<string, string> = {};
   if (!screening_id) errors.screening_id = "Screening is required";
   if (!full_name?.trim()) errors.full_name = "Full name is required";
-  if (!email?.trim()) errors.email = "Email is required";
+  if (!email?.trim()) {
+    errors.email = "Email is required";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+    errors.email = "Invalid email format";
+  }
   if (quantity < 1 || quantity > 8) errors.quantity = "Quantity must be 1-8";
 
   if (Object.keys(errors).length > 0) {

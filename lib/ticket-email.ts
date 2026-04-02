@@ -1,3 +1,5 @@
+import { escapeHtml } from "./utils";
+
 interface TicketEmailProps {
   ticketNumber: string;
   fullName: string;
@@ -45,7 +47,12 @@ export function buildTicketEmailHtml(props: TicketEmailProps): string {
     total,
   } = props;
 
-  const firstName = fullName.split(" ")[0];
+  const firstName = escapeHtml(fullName.split(" ")[0]);
+  const safeVenueName = escapeHtml(venueName);
+  const safeAddress = escapeHtml(address);
+  const safeCity = escapeHtml(city);
+  const safeState = escapeHtml(state);
+  const safeFullName = escapeHtml(fullName);
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -96,7 +103,7 @@ export function buildTicketEmailHtml(props: TicketEmailProps): string {
                   <td style="padding:10px 0;border-bottom:1px solid rgba(255,252,245,0.06);">
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
                       <td><p style="margin:0;font-size:10px;font-weight:600;letter-spacing:0.16em;color:rgba(240,230,204,0.32);text-transform:uppercase;">Screening</p></td>
-                      <td align="right"><p style="margin:0;font-size:14px;color:rgba(240,230,204,0.75);">${venueName}</p></td>
+                      <td align="right"><p style="margin:0;font-size:14px;color:rgba(240,230,204,0.75);">${safeVenueName}</p></td>
                     </tr></table>
                   </td>
                 </tr>
@@ -105,7 +112,7 @@ export function buildTicketEmailHtml(props: TicketEmailProps): string {
                   <td style="padding:10px 0;border-bottom:1px solid rgba(255,252,245,0.06);">
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
                       <td><p style="margin:0;font-size:10px;font-weight:600;letter-spacing:0.16em;color:rgba(240,230,204,0.32);text-transform:uppercase;">Location</p></td>
-                      <td align="right"><p style="margin:0;font-size:14px;color:rgba(240,230,204,0.75);">${city}, ${state}</p></td>
+                      <td align="right"><p style="margin:0;font-size:14px;color:rgba(240,230,204,0.75);">${safeCity}, ${safeState}</p></td>
                     </tr></table>
                   </td>
                 </tr>
@@ -114,7 +121,7 @@ export function buildTicketEmailHtml(props: TicketEmailProps): string {
                   <td style="padding:10px 0;border-bottom:1px solid rgba(255,252,245,0.06);">
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
                       <td><p style="margin:0;font-size:10px;font-weight:600;letter-spacing:0.16em;color:rgba(240,230,204,0.32);text-transform:uppercase;">Address</p></td>
-                      <td align="right"><p style="margin:0;font-size:14px;color:rgba(240,230,204,0.75);">${address}</p></td>
+                      <td align="right"><p style="margin:0;font-size:14px;color:rgba(240,230,204,0.75);">${safeAddress}</p></td>
                     </tr></table>
                   </td>
                 </tr>

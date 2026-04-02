@@ -1,31 +1,16 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase-server";
 import { resend } from "@/lib/resend";
 import { buildTicketEmailHtml } from "@/lib/ticket-email";
 
-export async function POST(request: NextRequest) {
-  const auth = request.headers.get("x-api-key");
-  if (auth !== process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+export const dynamic = "force-dynamic";
 
+export async function POST() {
   const supabase = createServiceClient();
 
   const { data: tickets, error } = await supabase
     .from("tickets")
-    .select(
-      `
-      id,
-      ticket_number,
-      full_name,
-      email,
-      quantity,
-      price_per_ticket,
-      price_total,
-      status,
-      screening_id
-    `
-    )
+    .select("id, ticket_number, full_name, email, quantity, price_per_ticket, price_total, status, screening_id")
     .in("status", ["confirmed", "paid"]);
 
   if (error) {

@@ -25,7 +25,12 @@ export async function POST(request: NextRequest) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    const meta = session.metadata!;
+    const meta = session.metadata;
+
+    if (!meta || !meta.screening_id || !meta.full_name || !meta.email) {
+      console.error("Webhook missing required metadata:", session.id);
+      return NextResponse.json({ error: "Missing metadata" }, { status: 400 });
+    }
 
     const screening_id = meta.screening_id;
     const full_name = meta.full_name;
