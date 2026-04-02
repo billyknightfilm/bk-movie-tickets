@@ -108,13 +108,17 @@ export default function ShowtimeCard({
 
         {isPremiere ? (
           <span
-            className="font-bebas font-medium text-[11px] tracking-[0.18em] px-3 py-1 rounded-full flex-shrink-0 mt-1"
+            className="font-bebas font-medium text-[12px] tracking-[0.18em] px-3.5 py-1.5 rounded-lg flex-shrink-0 mt-1 flex items-center gap-1.5"
             style={{
-              background: "rgba(195,170,90,0.14)",
-              border: "1px solid rgba(195,170,90,0.22)",
+              background: "rgba(195,170,90,0.18)",
+              border: "1px solid rgba(195,170,90,0.28)",
               color: "#D4AF37",
+              boxShadow: "0 0 12px rgba(195,170,90,0.15)",
             }}
           >
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
             PREMIERE
           </span>
         ) : (
