@@ -50,23 +50,23 @@ export default function ShowtimeCard({
       className="rounded-2xl px-6 py-5 md:px-7 md:py-6 relative overflow-hidden group"
       style={{
         background: isPremiere
-          ? "linear-gradient(135deg, rgba(195,170,90,0.05) 0%, rgba(140,115,45,0.03) 100%)"
+          ? "linear-gradient(135deg, rgba(195,170,90,0.09) 0%, rgba(140,115,45,0.06) 100%)"
           : "linear-gradient(135deg, rgba(19,34,64,0.5) 0%, rgba(11,21,37,0.6) 100%)",
         border: isPremiere
-          ? "1px solid rgba(195,170,90,0.10)"
+          ? "1px solid rgba(195,170,90,0.16)"
           : "1px solid rgba(255,255,255,0.06)",
         backdropFilter: "blur(40px)",
         WebkitBackdropFilter: "blur(40px)",
         boxShadow: isPremiere
-          ? "0 2px 16px rgba(140,115,45,0.06), 0 8px 48px rgba(140,115,45,0.03), inset 0 1px 0 rgba(232,213,163,0.06)"
+          ? "0 2px 16px rgba(140,115,45,0.10), 0 8px 48px rgba(140,115,45,0.05), inset 0 1px 0 rgba(232,213,163,0.10)"
           : "0 4px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04)",
       }}
       whileHover={{
         borderColor: isPremiere
-          ? "rgba(195,170,90,0.18)"
+          ? "rgba(195,170,90,0.28)"
           : "rgba(255,255,255,0.1)",
         boxShadow: isPremiere
-          ? "0 4px 24px rgba(140,115,45,0.08), 0 12px 64px rgba(140,115,45,0.05), 0 0 0 1px rgba(195,170,90,0.12), inset 0 1px 0 rgba(232,213,163,0.08)"
+          ? "0 4px 24px rgba(140,115,45,0.12), 0 12px 64px rgba(140,115,45,0.07), 0 0 0 1px rgba(195,170,90,0.18), inset 0 1px 0 rgba(232,213,163,0.12)"
           : "0 8px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.06)",
       }}
       transition={{ duration: 0.25 }}
@@ -75,7 +75,7 @@ export default function ShowtimeCard({
         className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
         style={{
           background: isPremiere
-            ? "radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(195,170,90,0.035), transparent 50%)"
+            ? "radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(195,170,90,0.055), transparent 50%)"
             : "radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(240,201,58,0.03), transparent 40%)",
         }}
       />
@@ -110,9 +110,9 @@ export default function ShowtimeCard({
           <span
             className="font-bebas font-medium text-[11px] tracking-[0.18em] px-3 py-1 rounded-full flex-shrink-0 mt-1"
             style={{
-              background: "rgba(195,170,90,0.08)",
-              border: "1px solid rgba(195,170,90,0.12)",
-              color: "#C9A84C",
+              background: "rgba(195,170,90,0.14)",
+              border: "1px solid rgba(195,170,90,0.22)",
+              color: "#D4AF37",
             }}
           >
             PREMIERE
