@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 
 type Phase = "input" | "transition" | "reveal";
@@ -62,21 +63,6 @@ export default function SecretPage() {
     return () => clearInterval(interval);
   }, [phase]);
 
-  const grooveRings = Array.from({ length: 18 }, (_, i) => {
-    const r = 38 + i * 3.2;
-    return (
-      <circle
-        key={i}
-        cx="160"
-        cy="160"
-        r={r}
-        fill="none"
-        stroke="rgba(195,170,90,0.07)"
-        strokeWidth={i % 3 === 0 ? "0.8" : "0.4"}
-      />
-    );
-  });
-
   return (
     <main className="min-h-screen relative overflow-hidden" style={{ background: "#080c12" }}>
       <style>{`
@@ -120,39 +106,25 @@ export default function SecretPage() {
               }}
               style={{ animation: phase === "input" ? "spin 2.5s linear infinite" : undefined }}
             >
-              {/* Disc */}
-              <svg
-                viewBox="0 0 320 320"
+              <Image
+                src="/images/vinyl.png"
+                alt=""
+                width={320}
+                height={320}
                 className="w-full h-full"
+                priority
                 style={{
                   animation: phase === "transition" ? "spin 2.5s linear infinite" : undefined,
                 }}
-              >
-                <circle cx="160" cy="160" r="158" fill="#0e0e0e" stroke="rgba(195,170,90,0.10)" strokeWidth="1" />
-                <circle cx="160" cy="160" r="155" fill="none" stroke="rgba(195,170,90,0.05)" strokeWidth="0.5" />
-                {grooveRings}
-                <circle cx="160" cy="160" r="25" fill="none" stroke="rgba(195,170,90,0.12)" strokeWidth="0.6" />
-              </svg>
-
-              {/* Frosted gold center label */}
-              <div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-                style={{
-                  width: "31%",
-                  height: "31%",
-                  background: phase === "transition"
-                    ? "radial-gradient(circle, rgba(20,18,12,0.95) 0%, rgba(8,12,18,1) 70%)"
-                    : "radial-gradient(circle, rgba(195,170,90,0.18) 0%, rgba(140,115,45,0.08) 60%, transparent 100%)",
-                  backdropFilter: "blur(20px)",
-                  WebkitBackdropFilter: "blur(20px)",
-                  transition: phase === "transition" ? "background 2s ease-in" : undefined,
-                }}
               />
 
-              {/* Spindle hole */}
-              <div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[3%] h-[3%] rounded-full"
-                style={{ background: "#080c12" }}
+              {/* Black overlay that fades in during zoom to ensure screen goes fully black */}
+              <motion.div
+                className="absolute inset-0 rounded-full"
+                initial={{ opacity: 0 }}
+                animate={phase === "transition" ? { opacity: 1 } : { opacity: 0 }}
+                transition={phase === "transition" ? { duration: 2, delay: 1.5, ease: "easeIn" } : {}}
+                style={{ background: "#000" }}
               />
             </motion.div>
 
