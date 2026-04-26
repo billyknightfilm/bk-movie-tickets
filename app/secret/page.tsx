@@ -118,6 +118,17 @@ export default function SecretPage() {
                 }}
               />
 
+              {/* Smooth grey center covering the white spindle hole */}
+              <div
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                style={{
+                  width: "8%",
+                  height: "8%",
+                  background: "radial-gradient(circle, #3a3a3a 0%, #2a2a2a 50%, #1e1e1e 100%)",
+                  boxShadow: "inset 0 1px 2px rgba(255,255,255,0.08), 0 0 4px rgba(0,0,0,0.5)",
+                }}
+              />
+
               {/* Black overlay that fades in during zoom to ensure screen goes fully black */}
               <motion.div
                 className="absolute inset-0 rounded-full"
