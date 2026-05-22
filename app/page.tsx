@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import Footer from "@/components/Footer";
+import { trackViewContent, trackInitiateCheckout } from "@/lib/tiktok-pixel";
 
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
@@ -18,6 +19,14 @@ export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
   const [isMuted, setIsMuted] = useState(true);
   const [showTrailer, setShowTrailer] = useState(false);
+  const viewTracked = useRef(false);
+
+  useEffect(() => {
+    if (!viewTracked.current) {
+      viewTracked.current = true;
+      trackViewContent();
+    }
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -69,6 +78,7 @@ export default function Home() {
             </Link>
             <Link
               href="/showtimes"
+              onClick={trackInitiateCheckout}
               className="px-5 py-2 rounded-xl font-montserrat font-medium text-[12px] tracking-[0.06em] text-white/90 transition-all duration-300 hover:text-white"
               style={{
                 background: "rgba(255,255,255,0.08)",
@@ -238,6 +248,7 @@ export default function Home() {
         </p>
         <Link
           href="/showtimes"
+          onClick={trackInitiateCheckout}
           className="px-10 py-3.5 rounded-xl font-montserrat font-medium text-[14px] tracking-[0.1em] text-white/90 transition-all duration-300 hover:text-white hover:scale-[1.02]"
           style={{
             background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%)",

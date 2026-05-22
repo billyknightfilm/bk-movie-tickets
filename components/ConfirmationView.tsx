@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import { trackPurchase } from "@/lib/tiktok-pixel";
 
 const EASE: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
 
@@ -53,6 +55,14 @@ export default function ConfirmationView({
   quantity,
   amountPaid,
 }: ConfirmationViewProps) {
+  const purchaseTracked = useRef(false);
+  useEffect(() => {
+    if (!purchaseTracked.current) {
+      purchaseTracked.current = true;
+      trackPurchase();
+    }
+  }, []);
+
   const firstName = fullName.split(" ")[0];
 
   const rows = [

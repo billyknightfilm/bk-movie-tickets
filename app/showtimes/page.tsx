@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, Suspense, useMemo } from "react";
+import { useState, useEffect, useCallback, Suspense, useMemo, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
@@ -11,6 +11,7 @@ import DatePicker from "@/components/DatePicker";
 import CheckoutPanel from "@/components/CheckoutPanel";
 import MobileCheckout from "@/components/MobileCheckout";
 import Footer from "@/components/Footer";
+import { trackViewContent } from "@/lib/tiktok-pixel";
 import type { Showtime, VenueGroup } from "@/components/ShowtimeCard";
 
 const PREMIERE_DATE = "2026-08-21";
@@ -24,6 +25,14 @@ function ShowtimesContent() {
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+
+  const viewTracked = useRef(false);
+  useEffect(() => {
+    if (!viewTracked.current) {
+      viewTracked.current = true;
+      trackViewContent();
+    }
+  }, []);
 
   useEffect(() => {
     const ref = searchParams.get("ref");

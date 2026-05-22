@@ -7,6 +7,7 @@ import {
   EmbeddedCheckoutProvider,
   EmbeddedCheckout,
 } from "@stripe/react-stripe-js";
+import { trackInitiateCheckout } from "@/lib/tiktok-pixel";
 import type { Showtime, VenueGroup } from "./ShowtimeCard";
 
 const stripePromise = loadStripe(
@@ -117,6 +118,7 @@ export default function CheckoutPanel({
       setError("Please fill in all required fields.");
       return;
     }
+    trackInitiateCheckout();
     setError("");
     setSubmitting(true);
 
